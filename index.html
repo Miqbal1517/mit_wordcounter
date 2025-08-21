@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter Tool | MIT Software Skills Institute</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #6c63ff;
+            --secondary: #4a44c9;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        .institute-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .app-description {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .input-section {
+            grid-column: 1 / -1;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 1rem;
+            resize: vertical;
+            transition: var(--transition);
+            margin-bottom: 15px;
+        }
+
+        .text-area:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.3);
+        }
+
+        .text-area::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-box:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.02);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .keyword-section {
+            margin-top: 20px;
+        }
+
+        .keyword-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .keyword-tab {
+            padding: 8px 15px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .keyword-tab.active {
+            background: var(--primary);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .keyword-list {
+            display: grid;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .keyword-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .keyword-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .keyword-text {
+            font-weight: 500;
+        }
+
+        .keyword-count {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="institute-name">MIT Software Skills Institute</div>
+            <h1 class="app-title">Advanced Word Counter Tool</h1>
+            <p class="app-description">Analyze your text in real-time with our professional word counter. Get detailed statistics, keyword density, and more.</p>
+        </header>
+
+        <div class="main-content">
+            <div class="card input-section">
+                <h2 class="card-title"><i class="fas fa-font"></i> Your Text</h2>
+                <textarea class="text-area" id="textInput" placeholder="Type or paste your text here..."></textarea>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="clearBtn">
+                        <i class="fas fa-broom"></i> Clear Text
+                    </button>
+                    <button class="btn btn-primary" id="copyBtn">
+                        <i class="fas fa-copy"></i> Copy Text
+                    </button>
+                    <button class="btn btn-secondary" id="exampleBtn">
+                        <i class="fas fa-magic"></i> Load Example
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-pie"></i> Text Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="wordCount">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="charCount">0</div>
+                        <div class="stat-label">Characters</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="sentenceCount">0</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="paragraphCount">0</div>
+                        <div class="stat-label">Paragraphs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-clock"></i> Reading Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="readingLevel">-</div>
+                        <div class="stat-label">Reading Level</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="readingTime">0s</div>
+                        <div class="stat-label">Reading Time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="speakingTime">0s</div>
+                        <div class="stat-label">Speaking Time</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-key"></i> Keyword Density</h2>
+                <div class="keyword-tabs">
+                    <div class="keyword-tab active" data-multiplier="1">x1</div>
+                    <div class="keyword-tab" data-multiplier="2">x2</div>
+                    <div class="keyword-tab" data-multiplier="3">x3</div>
+                </div>
+                <div class="keyword-list" id="keywordList">
+                    <div class="keyword-item">
+                        <span class="keyword-text">No keywords yet</span>
+                        <span class="keyword-count">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2023 MIT Software Skills Institute | Word Counter Tool</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const textInput = document.getElementById('textInput');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const exampleBtn = document.getElementById('exampleBtn');
+            const themeToggle = document.getElementById('themeToggle');
+            const keywordTabs = document.querySelectorAll('.keyword-tab');
+            
+            // Stat elements
+            const wordCountEl = document.getElementById('wordCount');
+            const charCountEl = document.getElementById('charCount');
+            const sentenceCountEl = document.getElementById('sentenceCount');
+            const paragraphCountEl = document.getElementById('paragraphCount');
+            const readingLevelEl = document.getElementById('readingLevel');
+            const readingTimeEl = document.getElementById('readingTime');
+            const speakingTimeEl = document.getElementById('speakingTime');
+            const keywordListEl = document.getElementById('keywordList');
+            
+            // Stop words to exclude from keyword density
+            const stopWords = new Set(['the', 'and', 'is', 'of', 'in', 'to', 'a', 'an', 'that', 'it', 'with', 'for', 'as', 'on', 'by', 'this', 'are', 'was', 'were', 'be', 'at', 'from', 'or', 'but', 'not', 'what', 'all', 'if', 'we', 'so', 'there', 'has', 'have', 'they', 'one', 'would', 'will', 'you', 'which', 'their', 'his', 'her', 'can', 'been', 'has', 'had', 'any', 'our', 'may', 'your', 'those', 'who', 'them', 'than', 'its', 'these', 'more', 'when', 'could', 'some', 'into', 'such', 'other', 'do', 'no', 'only', 'then', 'should', 'my', 'upon', 'most', 'too', 'where', 'why', 'how', 'i', 'me', 'he', 'she', 'we', 'us', 'them', 'him', 'her', 'his', 'hers', 'our', 'ours', 'your', 'yours', 'theirs', 'my', 'mine', 'its', 'am', 'is', 'are', 'was', 'were', 'be', 'being', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'shall', 'should', 'can', 'could', 'may', 'might', 'must', 'ought', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very']);
+            
+            // Example text
+            const exampleText = "Welcome to the Word Counter Tool by MIT Software Skills Institute. This powerful application helps you analyze your text in real-time. It provides comprehensive statistics including word count, character count, sentence count, and paragraph count. Additionally, it calculates reading time, speaking time, and identifies keyword density. This tool is perfect for writers, students, and professionals who need to optimize their content. Try pasting your own text to see detailed analysis!";
+            
+            // Initialize from localStorage if available
+            const savedText = localStorage.getItem('wordCounterText');
+            if (savedText) {
+                textInput.value = savedText;
+                analyzeText();
+            }
+            
+            // Event Listeners
+            textInput.addEventListener('input', analyzeText);
+            clearBtn.addEventListener('click', clearText);
+            copyBtn.addEventListener('click', copyText);
+            exampleBtn.addEventListener('click', loadExample);
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            keywordTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    keywordTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    analyzeText();
+                });
+            });
+            
+            // Text analysis function
+            function analyzeText() {
+                const text = textInput.value;
+                
+                // Save to localStorage
+                localStorage.setItem('wordCounterText', text);
+                
+                // Word count
+                const words = text.trim() ? text.trim().split(/\s+/) : [];
+                const wordCount = words.length;
+                
+                // Character count
+                const charCount = text.length;
+                
+                // Sentence count
+                const sentenceCount = text.trim() ? text.split(/[.!?]+/).filter(s => s.length > 0).length : 0;
+                
+                // Paragraph count
+                const paragraphCount = text.trim() ? text.split(/\n+/).filter(p => p.length > 0).length : 0;
+                
+                // Reading time (200 words per minute)
+                const readingTime = Math.ceil(wordCount / 200 * 60);
+                
+                // Speaking time (150 words per minute)
+                const speakingTime = Math.ceil(wordCount / 150 * 60);
+                
+                // Reading level (simplified)
+                const readingLevel = calculateReadingLevel(text);
+                
+                // Keyword density
+                const multiplier = parseInt(document.querySelector('.keyword-tab.active').dataset.multiplier);
+                const keywordDensity = calculateKeywordDensity(words, multiplier);
+                
+                // Update UI
+                wordCountEl.textContent = wordCount.toLocaleString();
+                charCountEl.textContent = charCount.toLocaleString();
+                sentenceCountEl.textContent = sentenceCount.toLocaleString();
+                paragraphCountEl.textContent = paragraphCount.toLocaleString();
+                readingTimeEl.textContent = `${readingTime}s`;
+                speakingTimeEl.textContent = `${speakingTime}s`;
+                readingLevelEl.textContent = readingLevel;
+                
+                // Update keyword list
+                updateKeywordList(keywordDensity);
+            }
+            
+            // Calculate reading level (simplified version)
+            function calculateReadingLevel(text) {
+                if (!text.trim()) return '-';
+                
+                const words = text.trim().split(/\s+/);
+                const sentences = text.split(/[.!?]+/).filter(s => s.length > 0);
+                
+                if (words.length < 5 || sentences.length < 1) return 'Easy';
+                
+                // Average words per sentence
+                const avgWordsPerSentence = words.length / sentences.length;
+                
+                // Calculate complex word percentage (simplified)
+                let complexWords = 0;
+                words.forEach(word => {
+                    if (word.length > 6) complexWords++;
+                });
+                
+                const complexWordPercentage = (complexWords / words.length) * 100;
+                
+                // Determine reading level based on metrics
+                if (avgWordsPerSentence < 10 && complexWordPercentage < 10) return 'Easy';
+                if (avgWordsPerSentence < 15 && complexWordPercentage < 20) return 'Medium';
+                if (avgWordsPerSentence < 20 && complexWordPercentage < 30) return 'High School';
+                return 'College Graduate';
+            }
+            
+            // Calculate keyword density
+            function calculateKeywordDensity(words, multiplier) {
+                const keywordMap = {};
+                
+                // Generate n-grams based on multiplier
+                for (let i = 0; i <= words.length - multiplier; i++) {
+                    // Clean word (remove punctuation and convert to lowercase)
+                    const keyword = words.slice(i, i + multiplier)
+                                        .map(w => w.replace(/[^\w]/g, '').toLowerCase())
+                                        .join(' ');
+                    
+                    // Skip if contains stop words or too short
+                    if (keyword.length < 3 || keyword.split(' ').some(w => stopWords.has(w))) {
+                        continue;
+                    }
+                    
+                    // Count occurrence
+                    if (keywordMap[keyword]) {
+                        keywordMap[keyword]++;
+                    } else {
+                        keywordMap[keyword] = 1;
+                    }
+                }
+                
+                // Convert to array and sort by frequency
+                return Object.entries(keywordMap)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10);
+            }
+            
+            // Update keyword list in UI
+            function updateKeywordList(keywordDensity) {
+                if (keywordDensity.length === 0) {
+                    keywordListEl.innerHTML = '<div class="keyword-item"><span class="keyword-text">No keywords yet</span><span class="keyword-count">0%</span></div>';
+                    return;
+                }
+                
+                const totalWords = document.getElementById('wordCount').textContent.replace(/,/g, '');
+                keywordListEl.innerHTML = '';
+                
+                keywordDensity.forEach(([keyword, count]) => {
+                    const percentage = ((count / totalWords) * 100).toFixed(1);
+                    
+                    const keywordItem = document.createElement('div');
+                    keywordItem.className = 'keyword-item';
+                    keywordItem.innerHTML = `
+                        <span class="keyword-text">${keyword}</span>
+                        <span class="keyword-count">${count} (${percentage}%)</span>
+                    `;
+                    
+                    keywordListEl.appendChild(keywordItem);
+                });
+            }
+            
+            // Clear text function
+            function clearText() {
+                textInput.value = '';
+                analyzeText();
+                
+                // Pulse animation on clear
+                const stats = document.querySelectorAll('.stat-value');
+                stats.forEach(stat => {
+                    stat.classList.add('pulse');
+                    setTimeout(() => stat.classList.remove('pulse'), 1500);
+                });
+            }
+            
+            // Copy text function
+            function copyText() {
+                textInput.select();
+                document.execCommand('copy');
+                
+                // Change button text temporarily
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Text';
+                }, 2000);
+            }
+            
+            // Load example text
+            function loadExample() {
+                textInput.value = exampleText;
+                analyzeText();
+            }
+            
+            // Toggle theme function
+            function toggleTheme() {
+                document.body.classList.toggle('dark-theme');
+                
+                const icon = themeToggle.querySelector('i');
+                if (document.body.classList.contains('dark-theme')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                    document.body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
+            }
+            
+            // Initial analysis if there's text
+            if (textInput.value) {
+                analyzeText();
+            }
+        });
+    </script>
+</body>
+</html>
